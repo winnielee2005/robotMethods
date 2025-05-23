@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-
+// base class (labelling for organisation)
 class Robot {
     protected:
     int x, y; 
@@ -35,6 +35,7 @@ class Robot {
     bool isAlive();
 };
 
+// derived class 1
 class SeeingRobot : virtual public Robot {
     public:
     SeeingRobot(std::string name, std::string type, int x, int y);
