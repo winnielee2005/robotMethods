@@ -76,6 +76,21 @@ public:
         } else {
             cout << name << " has no shells left!\n";
         }
+
+        // Declare hit chance
+        int chance = rand() % 100;
+        bool hit = chance < 70;
+
+        if (hit){
+            cout << "Enemy robot is destroyed!\n";
+            
+
+            if (upgradeCount < 3) {
+                upgrade("Seeing");
+            }else{
+                cout<<"Shot missed!\n";
+            }
+        }
     }
     void moving(int dx, int dy) override {
     positionX += dx;
@@ -107,7 +122,7 @@ class ScoutBot : public GenericRobot {
 
     void look(int dx, int dy) override {
         if (scoutsLeft > 0){
-            cout << name << "uses ScoutBot ability to see the entire battlefield. \n";
+            cout << name << " uses ScoutBot ability to see the entire battlefield. \n";
             scoutsLeft = scoutsLeft - 1;
         } else {
             // become normal?
@@ -172,6 +187,8 @@ GenericRobot::GenericRobot(std::string robotName, int x, int y){
 int main() {
     GenericRobot gr("Jet", 5, 5);
     Battlefield field(10, 10);
+    ScoutBot scoutbot("Jet", 10,10);
+    scoutbot.performTurn();
 
     field.clear();
     field.placeRobot(5, 5, 'G'); // 'G' for GenericRobot
