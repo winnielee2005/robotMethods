@@ -14,6 +14,7 @@ protected:
     int livesLeft = 3;
     int upgradeCount = 0;
 
+
 public:
     virtual ~Robot() {}
 
@@ -52,17 +53,32 @@ public:
 
 //Inherit from this long ahh code from above lmao
 class GenericRobot : public Robot, public MovingRobot, public ShootingRobot, public SeeingRobot, public ThinkingRobot {
-public:
-    GenericRobot(std::string robotName, int x, int y);
+private:
+    bool isScout = false;
+    int scoutsLeft = 0;
 
+public:
+    GenericRobot(std::string robotName, int x, int y){
+        name = robotName;
+        type = "GenericRobot";
+        positionX = x;
+        positionY = y;
+    }
+    
     void performTurn() override{
         think();
         look(0,0);
         moving(1,0);
         fire(1,0);
     }
+
     void look(int dx, int dy) override {
-    cout << name << " is looking at (" << positionX + dx << ", " << positionY + dy << ")\n";
+        if (isScout && scoutsLeft >0){
+            cout << name << " uses ScoutBot ability to scan the battlefield. Scouts left: "<< scoutsLeft <<"\n";
+            scoutsLeft--;
+        } else {
+            cout << name << " is looking at (" << positionX + dx <<","<< positionY + dy << ")\n";
+        }
 }
     void fire(int dx, int dy) override {
         if (dx == 0 && dy == 0) {
@@ -104,6 +120,12 @@ public:
     }
 
     cout << name << " upgrades in area: " << area << "\n";
+
+    if (area == "Seeing" && !isScout) {
+        isScout = true;
+        scoutsLeft = 3;
+        cout << name << " has gained ScoutBot abilities! \n";
+    }
     upgradeCount++;
 }
     void think() override {
@@ -111,37 +133,6 @@ public:
 }
 };
 
-//ScoutBot class
-class ScoutBot : public GenericRobot {
-    public :
-    ScoutBot(const std::string& name, int x, int y) : GenericRobot(name, x, y){
-        type = "ScoutBot";
-        hasScout = true;
-        scoutsLeft = 3;
-    }
-
-    void look(int dx, int dy) override {
-        if (scoutsLeft > 0){
-            cout << name << " uses ScoutBot ability to see the entire battlefield. \n";
-            scoutsLeft = scoutsLeft - 1;
-        } else {
-            // become normal?
-            GenericRobot::look(dx, dy);
-        }
-    }
-
-    void performTurn() override {
-        think();
-        look(0,0);
-        moving(1,0);
-        fire(1,0);
-    }
-
-    private:
-    int scoutsLeft;
-    bool hasScout;
-
-};
 
 //Battlefield
 class Battlefield {
@@ -176,19 +167,11 @@ public:
     }
 };
 
-//Robot implementation
-GenericRobot::GenericRobot(std::string robotName, int x, int y){
-    name = robotName;
-    type = "GenericRobot";
-    positionX = x;
-    positionY = y;
-}
+
 
 int main() {
     GenericRobot gr("Jet", 5, 5);
     Battlefield field(10, 10);
-    ScoutBot scoutbot("Jet", 10,10);
-    scoutbot.performTurn();
 
     field.clear();
     field.placeRobot(5, 5, 'G'); // 'G' for GenericRobot
@@ -196,6 +179,6 @@ int main() {
 
     gr.performTurn();
     return 0;
-}
+};
 
 
