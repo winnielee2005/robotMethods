@@ -111,11 +111,11 @@ class ScoutBot : public GenericRobot {
             scoutsLeft = scoutsLeft - 1;
         } else {
             // become normal?
-            GenericRobot::lool(dx, dy);
+            GenericRobot::look(dx, dy);
         }
     }
 
-    void performTurn() {
+    void performTurn() override {
         think();
         look(0,0);
         moving(1,0);
